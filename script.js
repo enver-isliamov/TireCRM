@@ -149,6 +149,21 @@ const addClientTemplate = `
       Добавить клиента
     </h1>
     <form id="add-client-form" class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md space-y-4">
+      <div class="flex items-end space-x-2">
+        <div class="flex-grow">
+          <label for="license-plate" class="block mb-2 text-sm font-medium">Госномер</label>
+          <input type="text" id="license-plate" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" placeholder="А123ВС777">
+        </div>
+        <button type="button" id="find-car" class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">Найти</button>
+      </div>
+      <div>
+        <label for="car-brand" class="block mb-2 text-sm font-medium">Марка</label>
+        <input type="text" id="car-brand" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" readonly>
+      </div>
+      <div>
+        <label for="car-model" class="block mb-2 text-sm font-medium">Модель</label>
+        <input type="text" id="car-model" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" readonly>
+      </div>
       <div>
         <label for="name" class="block mb-2 text-sm font-medium">Имя</label>
         <input type="text" id="name" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" required>
@@ -158,8 +173,22 @@ const addClientTemplate = `
         <input type="tel" id="phone" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" required>
       </div>
       <div>
-        <label for="carNumber" class="block mb-2 text-sm font-medium">Номер Авто</label>
-        <input type="text" id="carNumber" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" required>
+        <label for="tire-size" class="block mb-2 text-sm font-medium">Размер шин</label>
+        <input type="text" id="tire-size" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" placeholder="205/55 R16">
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label for="tire-width" class="block mb-2 text-sm font-medium">Ширина</label>
+          <input type="text" id="tire-width" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" readonly>
+        </div>
+        <div>
+          <label for="tire-profile" class="block mb-2 text-sm font-medium">Профиль</label>
+          <input type="text" id="tire-profile" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" readonly>
+        </div>
+        <div>
+          <label for="tire-diameter" class="block mb-2 text-sm font-medium">Диаметр</label>
+          <input type="text" id="tire-diameter" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" readonly>
+        </div>
       </div>
       <div>
         <label for="storage-months" class="block mb-2 text-sm font-medium">Срок хранения (месяцев)</label>
@@ -319,6 +348,14 @@ const router = () => {
 
   if (path === '/clients/add') {
     const form = document.getElementById('add-client-form');
+    const findCarButton = document.getElementById('find-car');
+    const licensePlateInput = document.getElementById('license-plate');
+    const carBrandInput = document.getElementById('car-brand');
+    const carModelInput = document.getElementById('car-model');
+    const tireSizeInput = document.getElementById('tire-size');
+    const tireWidthInput = document.getElementById('tire-width');
+    const tireProfileInput = document.getElementById('tire-profile');
+    const tireDiameterInput = document.getElementById('tire-diameter');
     const storageMonthsInput = document.getElementById('storage-months');
     const totalAmountElement = document.getElementById('total-amount');
     const pricePerMonth = 500;
@@ -329,6 +366,26 @@ const router = () => {
     };
 
     storageMonthsInput.addEventListener('input', calculateTotal);
+
+    tireSizeInput.addEventListener('input', () => {
+      const size = tireSizeInput.value.replace(/[^0-9/R]/gi, '').toUpperCase();
+      const match = size.match(/(\d+)\/?(\d+)?R(\d+)/);
+      if (match) {
+        tireWidthInput.value = match[1] || '';
+        tireProfileInput.value = match[2] || '';
+        tireDiameterInput.value = match[3] || '';
+      }
+    });
+
+    findCarButton.addEventListener('click', () => {
+      const plate = licensePlateInput.value;
+      // Mock API call
+      alert(`Ищем информацию по номеру ${plate}...`);
+      setTimeout(() => {
+        carBrandInput.value = 'Toyota';
+        carModelInput.value = 'Camry';
+      }, 1000);
+    });
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -380,11 +437,25 @@ const router = () => {
     const closeModal = document.getElementById('close-modal');
     const modalClientName = document.getElementById('modal-client-name');
     const modalClientDetails = document.getElementById('modal-client-details');
+    const printContractButton = document.getElementById('print-contract');
     const tabButtons = document.querySelectorAll('.modal-tab-button');
     const tabContents = document.querySelectorAll('.modal-content');
 
     closeModal.addEventListener('click', () => {
       modal.classList.add('hidden');
+    });
+
+    printContractButton.addEventListener('click', () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const clientName = modalClientName.textContent;
+      const clientDetails = modalClientDetails.innerText;
+
+      doc.text("Договор сезонного хранения шин", 10, 10);
+      doc.text(`Клиент: ${clientName}`, 10, 20);
+      doc.text("Детали:", 10, 30);
+      doc.text(clientDetails, 10, 40);
+      doc.save(`Договор_${clientName}.pdf`);
     });
 
     tabButtons.forEach(button => {
