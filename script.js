@@ -53,17 +53,27 @@ const dashboardTemplate = `
     <div class="mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       <canvas id="dynamic-chart"></canvas>
     </div>
+    <div class="mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+      <h2 class="text-2xl font-bold mb-4">Сроки хранения (Диаграмма Ганта)</h2>
+      <svg id="gantt"></svg>
+    </div>
     <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
         <h2 class="text-2xl font-bold mb-4">Скоро заканчивается срок</h2>
         <ul>
           <li class="flex justify-between items-center py-2 border-b dark:border-gray-700">
             <span>Петр Петров (осталось 5 дней)</span>
-            <button class="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700">Напомнить</button>
+            <div>
+              <button class="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700 mr-2">Напомнить</button>
+              <button class="google-calendar-btn px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600" data-name="Петр Петров" data-date="2025-02-10">В Календарь</button>
+            </div>
           </li>
           <li class="flex justify-between items-center py-2">
             <span>Анна Сидорова (осталось 12 дней)</span>
-            <button class="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700">Напомнить</button>
+            <div>
+              <button class="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700 mr-2">Напомнить</button>
+              <button class="google-calendar-btn px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600" data-name="Анна Сидорова" data-date="2025-02-17">В Календарь</button>
+            </div>
           </li>
         </ul>
       </div>
@@ -91,12 +101,17 @@ const clientsTemplate = `
       </a>
     </div>
     <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-      <div class="mb-4">
-        <input type="text" id="client-search" placeholder="Поиск по клиентам..." class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+      <div class="flex justify-between items-center mb-4">
+        <input type="text" id="client-search" placeholder="Поиск по клиентам..." class="w-1/3 p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+        <div>
+          <button id="save-view" class="px-4 py-2 text-sm text-white bg-green-600 rounded hover:bg-green-700 mr-2">Сохранить вид</button>
+          <button id="bulk-delete" class="px-4 py-2 text-sm text-white bg-red-600 rounded hover:bg-red-700">Удалить выбранные</button>
+        </div>
       </div>
       <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"><input type="checkbox" id="select-all-clients"></th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Имя</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Телефон</th>
             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Номер Авто</th>
@@ -107,6 +122,7 @@ const clientsTemplate = `
         </thead>
         <tbody id="clients-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-700">
           <tr>
+            <td class="px-6 py-4 whitespace-nowrap text-sm"><input type="checkbox" class="client-checkbox"></td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">Иван Иванов</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">+7 (999) 999-99-99</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">А123ВС777</td>
@@ -115,6 +131,7 @@ const clientsTemplate = `
             <td class="px-6 py-4 whitespace-nowrap text-sm">Активен</td>
           </tr>
           <tr>
+            <td class="px-6 py-4 whitespace-nowrap text-sm"><input type="checkbox" class="client-checkbox"></td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">Петр Петров</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">+7 (888) 888-88-88</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">В456ОР199</td>
@@ -146,6 +163,14 @@ const addClientTemplate = `
         <label for="carNumber" class="block mb-2 text-sm font-medium">Номер Авто</label>
         <input type="text" id="carNumber" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" required>
       </div>
+      <div>
+        <label for="storage-months" class="block mb-2 text-sm font-medium">Срок хранения (месяцев)</label>
+        <input type="number" id="storage-months" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600" value="6" required>
+      </div>
+      <div>
+        <label class="block mb-2 text-sm font-medium">Общая сумма к оплате</label>
+        <p id="total-amount" class="text-lg font-bold">3000₽</p>
+      </div>
       <button type="submit" class="w-full px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800">
         Добавить
       </button>
@@ -158,19 +183,33 @@ const settingsTemplate = `
     <h1 class="text-3xl font-bold mb-6">
       Настройки
     </h1>
-    <form id="settings-form" class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md space-y-4">
-      <div>
-        <label for="script-url" class="block mb-2 text-sm font-medium">URL Google Apps Script</label>
-        <input type="url" id="script-url" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+    <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md space-y-4">
+      <form id="settings-form" class="space-y-4">
+        <div>
+          <label for="script-url" class="block mb-2 text-sm font-medium">URL Google Apps Script</label>
+          <input type="url" id="script-url" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+        </div>
+        <div>
+          <label for="telegram-token" class="block mb-2 text-sm font-medium">Токен Telegram бота</label>
+          <input type="text" id="telegram-token" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
+        </div>
+        <button type="submit" class="w-full px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800">
+          Сохранить
+        </button>
+      </form>
+      <div class="mt-8">
+        <h2 class="text-2xl font-bold mb-4">Шаблоны сообщений</h2>
+        <div class="space-y-4">
+          <div>
+            <label for="reminder-template" class="block mb-2 text-sm font-medium">Напоминание об окончании срока</label>
+            <textarea id="reminder-template" rows="4" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600"></textarea>
+          </div>
+          <button id="save-templates" class="w-full px-5 py-3 text-base font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700">
+            Сохранить шаблоны
+          </button>
+        </div>
       </div>
-      <div>
-        <label for="telegram-token" class="block mb-2 text-sm font-medium">Токен Telegram бота</label>
-        <input type="text" id="telegram-token" class="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600">
-      </div>
-      <button type="submit" class="w-full px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800">
-        Сохранить
-      </button>
-    </form>
+    </div>
   </div>
 `;
 
@@ -250,24 +289,43 @@ const router = () => {
   }
 
   if (path === '/settings') {
-    const form = document.getElementById('settings-form');
+    const settingsForm = document.getElementById('settings-form');
     const scriptUrlInput = document.getElementById('script-url');
     const telegramTokenInput = document.getElementById('telegram-token');
+    const reminderTemplateInput = document.getElementById('reminder-template');
+    const saveTemplatesButton = document.getElementById('save-templates');
 
     // Load saved values
     scriptUrlInput.value = localStorage.getItem('scriptUrl') || '';
     telegramTokenInput.value = localStorage.getItem('telegramToken') || '';
+    reminderTemplateInput.value = localStorage.getItem('reminderTemplate') || 'Здравствуйте, {name}! Напоминаем, что срок хранения ваших шин истекает {endDate}.';
 
-    form.addEventListener('submit', (e) => {
+    settingsForm.addEventListener('submit', (e) => {
       e.preventDefault();
       localStorage.setItem('scriptUrl', scriptUrlInput.value);
       localStorage.setItem('telegramToken', telegramTokenInput.value);
       alert('Настройки сохранены!');
     });
+
+    saveTemplatesButton.addEventListener('click', () => {
+      localStorage.setItem('reminderTemplate', reminderTemplateInput.value);
+      alert('Шаблоны сохранены!');
+    });
   }
 
   if (path === '/clients/add') {
     const form = document.getElementById('add-client-form');
+    const storageMonthsInput = document.getElementById('storage-months');
+    const totalAmountElement = document.getElementById('total-amount');
+    const pricePerMonth = 500;
+
+    const calculateTotal = () => {
+      const months = parseInt(storageMonthsInput.value) || 0;
+      totalAmountElement.textContent = `${months * pricePerMonth}₽`;
+    };
+
+    storageMonthsInput.addEventListener('input', calculateTotal);
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       // This is a mock implementation. In a real app, you'd send this to a server.
@@ -289,26 +347,62 @@ const router = () => {
   if (path === '/clients') {
     const searchInput = document.getElementById('client-search');
     const tableBody = document.getElementById('clients-table-body');
+    const selectAllCheckbox = document.getElementById('select-all-clients');
+    const deleteButton = document.getElementById('bulk-delete');
+    const saveViewButton = document.getElementById('save-view');
+
+    selectAllCheckbox.addEventListener('change', (e) => {
+      const checkboxes = tableBody.querySelectorAll('.client-checkbox');
+      checkboxes.forEach(checkbox => checkbox.checked = e.target.checked);
+    });
+
+    deleteButton.addEventListener('click', () => {
+      const checkboxes = tableBody.querySelectorAll('.client-checkbox:checked');
+      if (confirm(`Вы уверены, что хотите удалить ${checkboxes.length} клиентов?`)) {
+        checkboxes.forEach(checkbox => checkbox.closest('tr').remove());
+      }
+    });
+
+    saveViewButton.addEventListener('click', () => {
+      const viewName = prompt('Введите название для этого вида:');
+      if (viewName) {
+        localStorage.setItem(`view_${viewName}`, searchInput.value);
+        alert(`Вид "${viewName}" сохранен!`);
+      }
+    });
+
     const rows = tableBody.getElementsByTagName('tr');
     const modal = document.getElementById('client-modal');
     const closeModal = document.getElementById('close-modal');
     const modalClientName = document.getElementById('modal-client-name');
     const modalClientDetails = document.getElementById('modal-client-details');
+    const tabButtons = document.querySelectorAll('.modal-tab-button');
+    const tabContents = document.querySelectorAll('.modal-content');
 
     closeModal.addEventListener('click', () => {
       modal.classList.add('hidden');
     });
 
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        tabButtons.forEach(btn => btn.classList.remove('text-blue-600', 'border-blue-600'));
+        button.classList.add('text-blue-600', 'border-blue-600');
+        tabContents.forEach(content => content.classList.add('hidden'));
+        document.getElementById(`modal-content-${button.dataset.tab}`).classList.remove('hidden');
+      });
+    });
+
     for (const row of rows) {
-      row.addEventListener('click', () => {
+      row.addEventListener('click', (e) => {
+        if (e.target.type === 'checkbox') return;
         const cells = row.getElementsByTagName('td');
-        modalClientName.textContent = cells[0].textContent;
+        modalClientName.textContent = cells[1].textContent;
         modalClientDetails.innerHTML = `
-          <strong>Телефон:</strong> ${cells[1].textContent}<br>
-          <strong>Номер Авто:</strong> ${cells[2].textContent}<br>
-          <strong>Дата окончания:</strong> ${cells[3].textContent}<br>
-          <strong>Долг:</strong> ${cells[4].textContent}<br>
-          <strong>Статус:</strong> ${cells[5].textContent}
+          <strong>Телефон:</strong> ${cells[2].textContent}<br>
+          <strong>Номер Авто:</strong> ${cells[3].textContent}<br>
+          <strong>Дата окончания:</strong> ${cells[4].textContent}<br>
+          <strong>Долг:</strong> ${cells[5].textContent}<br>
+          <strong>Статус:</strong> ${cells[6].textContent}
         `;
         modal.classList.remove('hidden');
       });
@@ -332,6 +426,24 @@ const router = () => {
   }
 
   if (path === '/') {
+    // Google Calendar integration
+    document.querySelectorAll('.google-calendar-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const name = e.target.dataset.name;
+        const date = e.target.dataset.date.replace(/-/g, '');
+        const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=Забрать+шины+(${name})&dates=${date}/${date}&details=Не+забыть+забрать+шины+клиента+${name}`;
+        window.open(url, '_blank');
+      });
+    });
+
+    // Gantt Chart
+    const tasks = [
+      { id: '1', name: 'Иван Иванов', start: '2024-10-01', end: '2025-04-01', progress: 60 },
+      { id: '2', name: 'Петр Петров', start: '2024-11-15', end: '2025-05-15', progress: 40 },
+      { id: '3', name: 'Анна Сидорова', start: '2024-09-01', end: '2025-03-01', progress: 80 },
+    ];
+    new Gantt("#gantt", tasks);
+
     // Live Revenue Counter
     const liveRevenueElement = document.getElementById('live-revenue');
     let currentRevenue = 1250000;
