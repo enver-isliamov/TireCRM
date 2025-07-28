@@ -1,12 +1,19 @@
 import React from 'react';
+import toast from 'react-hot-toast';
 
 const AddClient = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Here you would typically call 현실 API
+    toast.success('Клиент успешно добавлен!');
+  };
+
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
         Добавить клиента
       </h1>
-      <form className="space-y-8">
+      <form className="space-y-8" onSubmit={handleSubmit}>
         {/* Section 1: Client and Car */}
         <div className="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
