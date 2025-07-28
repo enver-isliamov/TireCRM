@@ -28,61 +28,59 @@ const loginTemplate = `
 `;
 
 const dashboardTemplate = `
-  <div class="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white">
-    <h1 class="text-3xl font-bold mb-6">
-      Дашборд
-    </h1>
+  <div class="p-8">
+    <h1 class="text-3xl font-bold mb-8">Дашборд</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-        <h2 class="text-lg font-medium">Всего клиентов</h2>
-        <p class="text-3xl font-bold">125</p>
+      <div class="card p-6">
+        <h3 class="text-lg font-medium text-[var(--muted-foreground)]">Всего клиентов</h3>
+        <p class="text-3xl font-bold mt-2">125</p>
       </div>
-      <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-        <h2 class="text-lg font-medium">Общая выручка</h2>
-        <p class="text-3xl font-bold">1,250,000₽</p>
+      <div class="card p-6">
+        <h3 class="text-lg font-medium text-[var(--muted-foreground)]">Общая выручка</h3>
+        <p class="text-3xl font-bold mt-2">1,250,000₽</p>
       </div>
-      <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-        <h2 class="text-lg font-medium">Общая сумма долга</h2>
-        <p class="text-3xl font-bold">75,000₽</p>
+      <div class="card p-6">
+        <h3 class="text-lg font-medium text-[var(--muted-foreground)]">Общая сумма долга</h3>
+        <p class="text-3xl font-bold mt-2">75,000₽</p>
       </div>
-      <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-        <h2 class="text-lg font-medium">"Живой" счетчик дохода</h2>
-        <p id="live-revenue" class="text-3xl font-bold text-green-500">1,250,000₽</p>
+      <div class="card p-6">
+        <h3 class="text-lg font-medium text-[var(--muted-foreground)]">"Живой" счетчик дохода</h3>
+        <p id="live-revenue" class="text-3xl font-bold mt-2 text-green-500">1,250,000₽</p>
       </div>
     </div>
-    <div class="mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <div class="mt-8 card p-6">
       <canvas id="dynamic-chart"></canvas>
     </div>
-    <div class="mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <div class="mt-8 card p-6">
       <h2 class="text-2xl font-bold mb-4">Сроки хранения (Диаграмма Ганта)</h2>
       <svg id="gantt"></svg>
     </div>
     <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+      <div class="card p-6">
         <h2 class="text-2xl font-bold mb-4">Скоро заканчивается срок</h2>
         <ul>
-          <li class="flex justify-between items-center py-2 border-b dark:border-gray-700">
+          <li class="flex justify-between items-center py-3 border-b border-[var(--border)]">
             <span>Петр Петров (осталось 5 дней)</span>
             <div>
-              <button class="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700 mr-2">Напомнить</button>
-              <button class="google-calendar-btn px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600" data-name="Петр Петров" data-date="2025-02-10">В Календарь</button>
+              <button class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 mr-2">Напомнить</button>
+              <button class="google-calendar-btn px-4 py-2 text-sm text-white bg-yellow-500 rounded-lg hover:bg-yellow-600" data-name="Петр Петров" data-date="2025-02-10">В Календарь</button>
             </div>
           </li>
-          <li class="flex justify-between items-center py-2">
+          <li class="flex justify-between items-center py-3">
             <span>Анна Сидорова (осталось 12 дней)</span>
             <div>
-              <button class="px-3 py-1 text-sm text-white bg-blue-600 rounded hover:bg-blue-700 mr-2">Напомнить</button>
-              <button class="google-calendar-btn px-3 py-1 text-sm text-white bg-yellow-500 rounded hover:bg-yellow-600" data-name="Анна Сидорова" data-date="2025-02-17">В Календарь</button>
+              <button class="px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 mr-2">Напомнить</button>
+              <button class="google-calendar-btn px-4 py-2 text-sm text-white bg-yellow-500 rounded-lg hover:bg-yellow-600" data-name="Анна Сидорова" data-date="2025-02-17">В Календарь</button>
             </div>
           </li>
         </ul>
       </div>
-      <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+      <div class="card p-6">
         <h2 class="text-2xl font-bold mb-4">Должники</h2>
         <ul>
-          <li class="flex justify-between items-center py-2 border-b dark:border-gray-700">
+          <li class="flex justify-between items-center py-3 border-b border-[var(--border)]">
             <span>Максим Максимов (долг: 3000₽)</span>
-            <button class="px-3 py-1 text-sm text-white bg-red-600 rounded hover:bg-red-700">Напомнить о долге</button>
+            <button class="px-4 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-700">Напомнить о долге</button>
           </li>
         </ul>
       </div>
@@ -222,26 +220,32 @@ const routes = {
 };
 
 const sidebarTemplate = `
-  <div class="w-64 h-screen bg-white dark:bg-gray-800 shadow-md flex flex-col justify-between">
+  <div class="w-64 h-screen bg-[var(--card)] shadow-lg flex flex-col justify-between">
     <div>
-      <div class="p-6">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">CRM</h2>
+      <div class="p-6 flex items-center space-x-2">
+        <ion-icon name="car-sport-outline" class="text-3xl text-[var(--primary)]"></ion-icon>
+        <h2 class="text-2xl font-bold">TireCRM</h2>
       </div>
-      <nav class="mt-6">
-        <a href="#/" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+      <nav class="mt-6 space-y-2">
+        <a href="#/" class="flex items-center px-6 py-3 text-[var(--muted-foreground)] hover:bg-[var(--secondary)] rounded-lg transition-all duration-200">
+          <ion-icon name="grid-outline" class="text-xl"></ion-icon>
           <span class="mx-3">Дашборд</span>
         </a>
-        <a href="#/clients" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+        <a href="#/clients" class="flex items-center px-6 py-3 text-[var(--muted-foreground)] hover:bg-[var(--secondary)] rounded-lg transition-all duration-200">
+          <ion-icon name="people-outline" class="text-xl"></ion-icon>
           <span class="mx-3">Клиенты</span>
         </a>
-        <a href="#/settings" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+        <a href="#/settings" class="flex items-center px-6 py-3 text-[var(--muted-foreground)] hover:bg-[var(--secondary)] rounded-lg transition-all duration-200">
+          <ion-icon name="settings-outline" class="text-xl"></ion-icon>
           <span class="mx-3">Настройки</span>
         </a>
       </nav>
     </div>
-    <div class="p-6">
-      <button id="theme-switcher" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700"></button>
-      <button id="mobile-emulator" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 ml-2">📱</button>
+    <div class="p-6 flex space-x-2">
+      <button id="theme-switcher" class="p-3 rounded-full bg-[var(--secondary)] hover:bg-[var(--border)] transition-all duration-200"></button>
+      <button id="mobile-emulator" class="p-3 rounded-full bg-[var(--secondary)] hover:bg-[var(--border)] transition-all duration-200">
+        <ion-icon name="phone-portrait-outline"></ion-icon>
+      </button>
     </div>
   </div>
 `;
@@ -275,12 +279,12 @@ const router = () => {
 
     const currentTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.classList.toggle('dark', currentTheme === 'dark');
-    themeSwitcher.innerHTML = currentTheme === 'light' ? '🌙' : '☀️';
+    themeSwitcher.innerHTML = currentTheme === 'light' ? '<ion-icon name="moon-outline"></ion-icon>' : '<ion-icon name="sunny-outline"></ion-icon>';
 
     themeSwitcher.addEventListener('click', () => {
       const theme = document.documentElement.classList.toggle('dark');
       localStorage.setItem('theme', theme ? 'dark' : 'light');
-      themeSwitcher.innerHTML = theme ? '☀️' : '🌙';
+      themeSwitcher.innerHTML = theme ? '<ion-icon name="sunny-outline"></ion-icon>' : '<ion-icon name="moon-outline"></ion-icon>';
     });
 
     mobileEmulator.addEventListener('click', () => {
