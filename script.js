@@ -51,9 +51,14 @@ const dashboardTemplate = `
 
 const clientsTemplate = `
   <div class="p-6 bg-gray-50 min-h-screen">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">
-      Клиенты
-    </h1>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">
+        Клиенты
+      </h1>
+      <a href="#/clients/add" class="px-5 py-3 text-base font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300">
+        Добавить клиента
+      </a>
+    </div>
     <div class="p-6 bg-white rounded-lg shadow-md">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
@@ -81,6 +86,17 @@ const clientsTemplate = `
   </div>
 `;
 
+const addClientTemplate = `
+  <div class="p-6 bg-gray-50 min-h-screen">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">
+      Добавить клиента
+    </h1>
+    <div class="p-6 bg-white rounded-lg shadow-md">
+      <p class="text-gray-500">Здесь будет форма добавления клиента...</p>
+    </div>
+  </div>
+`;
+
 const settingsTemplate = `
   <div class="p-6 bg-gray-50 min-h-screen">
     <h1 class="text-3xl font-bold text-gray-900 mb-6">
@@ -96,30 +112,37 @@ const routes = {
   '/': dashboardTemplate,
   '/login': loginTemplate,
   '/clients': clientsTemplate,
+  '/clients/add': addClientTemplate,
   '/settings': settingsTemplate,
 };
 
 const sidebarTemplate = `
-  <div class="w-64 h-screen bg-white shadow-md">
-    <div class="p-6">
-      <h2 class="text-2xl font-bold text-gray-900">CRM</h2>
+  <div class="w-64 h-screen bg-white dark:bg-gray-800 shadow-md flex flex-col justify-between">
+    <div>
+      <div class="p-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">CRM</h2>
+      </div>
+      <nav class="mt-6">
+        <a href="#/" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <span class="mx-3">Дашборд</span>
+        </a>
+        <a href="#/clients" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <span class="mx-3">Клиенты</span>
+        </a>
+        <a href="#/settings" class="flex items-center px-6 py-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <span class="mx-3">Настройки</span>
+        </a>
+      </nav>
     </div>
-    <nav class="mt-6">
-      <a href="#/" class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-        <span class="mx-3">Дашборд</span>
-      </a>
-      <a href="#/clients" class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-        <span class="mx-3">Клиенты</span>
-      </a>
-      <a href="#/settings" class="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100">
-        <span class="mx-3">Настройки</span>
-      </a>
-    </nav>
+    <div class="p-6">
+      <button id="theme-switcher" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700"></button>
+      <button id="mobile-emulator" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 ml-2">📱</button>
+    </div>
   </div>
 `;
 
 const layoutTemplate = (content) => `
-  <div class="flex">
+  <div id="main-container" class="flex">
     ${sidebarTemplate}
     <main class="flex-1">
       ${content}
@@ -138,6 +161,26 @@ const router = () => {
 
   const content = routes[path] || '<h1>404 - Страница не найдена</h1>';
   app.innerHTML = path === '/login' ? content : layoutTemplate(content);
+
+  if (path !== '/login') {
+    const themeSwitcher = document.getElementById('theme-switcher');
+    const mobileEmulator = document.getElementById('mobile-emulator');
+    const mainContainer = document.getElementById('main-container');
+
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.classList.toggle('dark', currentTheme === 'dark');
+    themeSwitcher.innerHTML = currentTheme === 'light' ? '🌙' : '☀️';
+
+    themeSwitcher.addEventListener('click', () => {
+      const theme = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', theme ? 'dark' : 'light');
+      themeSwitcher.innerHTML = theme ? '☀️' : '🌙';
+    });
+
+    mobileEmulator.addEventListener('click', () => {
+      mainContainer.classList.toggle('mobile-view');
+    });
+  }
 
 
   if (path === '/login') {
