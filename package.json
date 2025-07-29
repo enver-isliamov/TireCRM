@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://Tire-Storage-CRM.github.io/tire-storage-crm",
+  "homepage": "https://enver-isliamov.github.io/TireCRM",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
