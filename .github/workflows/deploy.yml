@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # Измените на вашу основную ветку, если она другая
+      - main
 
 jobs:
   build-and-deploy:
@@ -16,17 +16,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Используем стабильную версию Node.js
+          node-version: '18'
           cache: 'yarn'
 
       - name: Install dependencies
-        run: cd tire-storage-crm && yarn install
+        run: yarn install
 
       - name: Build
-        run: cd tire-storage-crm && yarn build
+        run: yarn build
 
-      - name="Deploy to GitHub Pages"
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./tire-storage-crm/dist
+          publish_dir: ./dist
